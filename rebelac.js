@@ -71,5 +71,21 @@ message.channel.send(avtEmbed);
 .catch(() => message.channel.send(`Error`));
 } 
 });
-
+client.on("message", message => {
+    if (message.author.id !== client.user.id) return;
+    if (message.content.startsWith("+c")) {
+        message.channel.fetchMessages(100).then(messages => {
+            const prunable = messages.filter(m => m.author.id === client.user.id);
+            return Promise.all(
+                prunable.map(m => {
+                    if (m.type === 'CALL') return;
+                    setTimeout(() => {
+                      m.delete();
+                    }, 1500);
+                })
+            );
+        });
+    }
+});
+client.on("error", console.error);
 client.login(process.env.BOT_TOKEN);
